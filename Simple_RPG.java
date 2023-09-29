@@ -73,12 +73,16 @@ public class Simple_RPG{
 		int intCharY = intCharXStart;
 		int intCharXLast = intCharX;
 		int intCharYLast = intCharY;
-		int intDamage;
-		int intDefence;
-		int intHealth;
-		int intMaxDamage;
-		int intFullHealth;
-		int intFullDefence;
+		int intCharXMem = intCharX;
+		int intCharYMem = intCharY;
+		int intDamage = 10;
+		int intDefence = 0;
+		int intHealth = 50;
+		int intMaxDamage = 25;
+		int intFullHealth = 50;
+		int intFullDefence = 0;
+		int intDamageLevel = 0;
+		int intDefenceLevel = 0;
 		int intEnemyDamage;
 		int intEnemyDefence;
 		int intEnemyHealth;
@@ -107,6 +111,14 @@ public class Simple_RPG{
 				//Resetting Variables
 				intCharX = intCharXStart;
 				intCharY = intCharYStart;
+				intHealth = 50;
+				intFullHealth = 50;
+				intDefence = 0;
+				intFullDefence = 0;
+				intDamage = 10;
+				intMaxDamage = 50;
+				intDamageLevel = 0;
+				intDefenceLevel = 0;
 				
 				//Closing File
 				txtMap.close();
@@ -171,7 +183,7 @@ public class Simple_RPG{
 					intCharX = intCharX + 1;
 				}
 				
-				//Character Movement Bounding
+				//Character Movement Bounding Restriction
 				if(intCharX < 1){
 					intCharX = 1;
 				}
@@ -190,12 +202,53 @@ public class Simple_RPG{
 					dblScene = 2.3;
 				}
 				
+				//Tree Restriction
+				if(strMap[intCharY - 1][intCharX - 1].equals("t")){
+					intCharX = intCharXLast;
+					intCharY = intCharYLast;
+				}
+				
+				//Shield Regen
+				if(intDefence < intFullDefence && (intCharX != intCharXLast || intCharY != intCharYLast)){
+					intDefence = intDefence + 1;
+				}
+				
 				//TO PROGRAM
-				//ACCURATE STATS HUD DISPLAY
-				//BUILDING INTERACTION
-				//BUFF CARRY INTERACTION
+				//Draw Buildings, Buffs, and Enem
 				//FIGHTING INTERACTION
-				//When interacted, change the array value to " ", will result in a grass tile
+				
+				
+				//CRITICAL = 2x DAMAGE
+				
+				//HERO INTERACTION
+				//Health always maxes at 50
+				//Shield 0 = 0
+				//Shield 1 = 5
+				//Shield 2 = 10
+				//Shield 3 = 15
+				//Shield 4 = 25
+				//Damage 0 = 10
+				//Damage 1 = 15
+				//Damage 2 = 23
+				//Damage 3 = 35
+				//Damage 4 = 50
+				
+				//ENEMY INTERACTION
+				//e1 = 10 health, 0 shield, 10 damage, 1% chance crit
+				//e2 = 25 health, 0 shield, 15 damage, 3% chance crit
+				//e3 = 50 health, 10 shield, 20 damage, 5% chance crit
+				//e4 = 75 health, 25 shield, 25 damage, 7% chance crit
+				//e5 = 100 health, 50 shield, 30 damage, 10% chance crit
+				
+				//TIME BASED ATTACKING SYSTEM
+				//Shield Regens 10%/second
+				//Enemy Attacks Every 5 Seconds
+				//Hero can attack constantly, but player has to stop a bouncing RYG slider in green zone.
+				//OUTER 10% EDGES - Black = 10% full damage
+				//NEXT 10% - 30%  - Red = 25% full damage
+				//NEXT 30% - 45%  - Yellow = 50% full damage
+				//NEXT 45% - 49%  - Green = 100% full damage
+				//MIDDLE 49%, 50% - Orange = CRIT 200% full damage
 				
 				//MaxDamage represents the maximum amount of damage attainable through all sources of powerups
 				//FullHealth represents the current 100% state of health
@@ -203,8 +256,76 @@ public class Simple_RPG{
 				
 				
 				//Scene Graphics
-				Scene2a(strMap, intCharX, intCharY, intCharXLast, intCharYLast);
+				Scene2a(strMap, intCharX, intCharY, intCharXLast, intCharYLast, intDamage, intMaxDamage, intDefence, intFullDefence, intHealth, intFullHealth);
 				
+				//Defence Buff Pickup
+				if(strMap[intCharY - 1][intCharX - 1].equals("s")){
+					//Increment Defence Level
+					intDefenceLevel = intDefenceLevel + 1;
+					
+					//Apply Defence Level
+					if(intDefenceLevel == 1){
+						intFullDefence = 5;
+					}
+					else if(intDefenceLevel == 2){
+						intFullDefence = 10;
+					}
+					else if(intDefenceLevel == 3){
+						intFullDefence = 15;
+					}
+					else if(intDefenceLevel == 4){
+						intFullDefence = 25;
+					}
+					
+					//Remove Shield
+					strMap[intCharY - 1][intCharX - 1] = "";
+				}
+				
+				//Damage Buff Pickup
+				if(strMap[intCharY - 1][intCharX - 1].equals("d")){
+					//Increment Defence Level
+					intDamageLevel = intDamageLevel + 1;
+					
+					//Apply Defence Level
+					if(intDamageLevel == 1){
+						intDamage = 15;
+					}
+					else if(intDamageLevel == 2){
+						intDamage = 23;
+					}
+					else if(intDamageLevel == 3){
+						intDamage = 35;
+					}
+					else if(intDamageLevel == 4){
+						intDamage = 50;
+					}
+					
+					//Remove Sword
+					strMap[intCharY - 1][intCharX - 1] = "";	
+				}
+				
+				//Building Interaction
+				if(strMap[intCharY - 1][intCharX - 1].equals("b")){
+					//Saving Last Position to Memory (To Allow Animation)
+					intCharXMem = intCharXLast;
+					intCharYMem = intCharYLast;
+					intCharXLast = intCharX;
+					intCharYLast = intCharY;
+					
+					//Health Regen Animation
+					while(intHealth < intFullHealth){
+						intHealth = intHealth + 1;
+						Scene2a(strMap, intCharX, intCharY, intCharXLast, intCharYLast, intDamage, intMaxDamage, intDefence, intFullDefence, intHealth, intFullHealth);
+						con.sleep(50);
+					}
+					
+					//Reverting Position
+					intCharX = intCharXMem;
+					intCharY = intCharYMem;
+					Scene2a(strMap, intCharX, intCharY, intCharXLast, intCharYLast, intDamage, intMaxDamage, intDefence, intFullDefence, intHealth, intFullHealth);
+				}
+				
+				//Last Position Tracking
 				intCharXLast = intCharX;
 				intCharYLast = intCharY;
 				
@@ -218,6 +339,8 @@ public class Simple_RPG{
 				//Scene Graphics
 				Scene2c();
 				
+				con.sleep(1000);
+				
 				//Scene Input
 				chrPlayAgain = con.getChar();
 				
@@ -227,6 +350,18 @@ public class Simple_RPG{
 				else{
 					dblScene = 4;
 				}
+				
+			}
+			
+			
+			
+			
+			
+			//Scene 4 - GAME OVER (END PROGRAM)
+			while(dblScene == 4){
+				
+				//Terminate Program
+				con.closeConsole();
 				
 			}
 		}
@@ -382,7 +517,7 @@ public class Simple_RPG{
 		
 		//Transition Out if Input Selected
 		if(dblScene != 1){
-			for(intCount = 0; intCount < 45; intCount++){
+			for(intCount = 0; intCount < 30; intCount++){
 				con.fillRect(intPosX, 0, 1150, 800);
 				intVelo = intVelo + 3;
 				intPosX = intPosX - intVelo;
@@ -393,7 +528,7 @@ public class Simple_RPG{
 	}
 	
 	//Scene 2.1 - MAP
-	public static void Scene2a(String strMap[][], int intCharX, int intCharY, int intCharXLast, int intCharYLast){
+	public static void Scene2a(String strMap[][], int intCharX, int intCharY, int intCharXLast, int intCharYLast, int intDamage, int intMaxDamage, int intDefence, int intFullDefence, int intHealth, int intFullHealth){
 		
 		//Scene Images
 		BufferedImage imgTree = con.loadImage("Graphics/tree.png");
@@ -401,9 +536,11 @@ public class Simple_RPG{
 		BufferedImage imgWater = con.loadImage("Graphics/water.png");
 		BufferedImage imgBuild = con.loadImage("Graphics/build.png");
 		BufferedImage imgHero = con.loadImage("Graphics/hero.png");
-		BufferedImage imgHP100 = con.loadImage("Graphics/health100.png");
 		BufferedImage imgDamage = con.loadImage("Graphics/damage.png");
 		BufferedImage imgShield = con.loadImage("Graphics/shield.png");
+		BufferedImage imgHP100 = con.loadImage("Graphics/health100.png");
+		BufferedImage imgHUDDamage = con.loadImage("Graphics/HUDdamage.png");
+		BufferedImage imgHUDShield = con.loadImage("Graphics/HUDshield.png");
 		
 		//Font Alignment Variable (Coordinate Based)
 		int intCAlign[] = new int[2];
@@ -421,11 +558,13 @@ public class Simple_RPG{
 		
 		//Drawing HUD Stats Fill
 		con.setDrawColor(clrDamage);
-		con.fillRect(825, 575, 200, 50);
+		con.fillRect(825, 575, 300 * intDamage/intMaxDamage, 50);
 		con.setDrawColor(clrShield);
-		con.fillRect(825, 650, 200, 50);
+		if(intFullDefence != 0){
+			con.fillRect(825, 650, 300 * intDefence/intFullDefence, 50);
+		}
 		con.setDrawColor(clrRed);
-		con.fillRect(825, 725, 200, 50);
+		con.fillRect(825, 725, 300 * intHealth/intFullHealth, 50);
 		
 		//Preparing Elements
 		con.setDrawColor(clrWhite);
@@ -433,19 +572,19 @@ public class Simple_RPG{
 		
 		//Drawing HUD Outline and Elements
 		con.drawRect(825, 575, 300, 50);
-		con.drawImage(imgDamage, 840, 585);
+		con.drawImage(imgHUDDamage, 840, 585);
 		con.drawRect(825, 650, 300, 50);
-		con.drawImage(imgShield, 840, 660);
+		con.drawImage(imgHUDShield, 840, 660);
 		con.drawRect(825, 725, 300, 50);
 		con.drawImage(imgHP100, 840, 735);
 		
 		//Drawing HUD Text
-		intCAlign = CAlign(fnt30, "30/30");
-		con.drawString("30/30", 975 - (intCAlign[0]/2), 592 - (intCAlign[1]/2));
-		intCAlign = CAlign(fnt30, "30/30");
-		con.drawString("30/30", 975 - (intCAlign[0]/2), 667 - (intCAlign[1]/2));
-		intCAlign = CAlign(fnt30, "30/30");
-		con.drawString("30/30", 975 - (intCAlign[0]/2), 742 - (intCAlign[1]/2));
+		intCAlign = CAlign(fnt30, intDamage+"/"+intMaxDamage);
+		con.drawString(intDamage+"/"+intMaxDamage, 975 - (intCAlign[0]/2), 592 - (intCAlign[1]/2));
+		intCAlign = CAlign(fnt30, intDefence+"/"+intFullDefence);
+		con.drawString(intDefence+"/"+intFullDefence, 975 - (intCAlign[0]/2), 667 - (intCAlign[1]/2));
+		intCAlign = CAlign(fnt30, intHealth+"/"+intFullHealth);
+		con.drawString(intHealth+"/"+intFullHealth, 975 - (intCAlign[0]/2), 742 - (intCAlign[1]/2));
 		
 		//Hero Movement Animation
 		if(intCharX > intCharXLast){
@@ -574,17 +713,26 @@ public class Simple_RPG{
 		for(intCount = 0; intCount < 20; intCount++){
 			//Reading Columns
 			for(intCount2 = 0; intCount2 < 20; intCount2++){
+				//Base Elements
 				if(strMap[intCount][intCount2].equals("w")){
 					con.drawImage(imgWater, (intCount2 * 40), (intCount * 40));
 				}
 				else if(strMap[intCount][intCount2].equals("t")){
 					con.drawImage(imgTree, (intCount2 * 40), (intCount * 40));
 				}
-				else if(strMap[intCount][intCount2].equals("b")){
-					con.drawImage(imgBuild, (intCount2 * 40), (intCount * 40));
-				}
 				else{
 					con.drawImage(imgGrass, (intCount2 * 40), (intCount * 40));
+				}
+				
+				//Additional Elements
+				if(strMap[intCount][intCount2].equals("b")){
+					con.drawImage(imgBuild, (intCount2 * 40), (intCount * 40));
+				}
+				else if(strMap[intCount][intCount2].equals("s")){
+					con.drawImage(imgShield, (intCount2 * 40), (intCount * 40));
+				}
+				else if(strMap[intCount][intCount2].equals("d")){
+					con.drawImage(imgDamage, (intCount2 * 40), (intCount * 40));
 				}
 			}
 		}
