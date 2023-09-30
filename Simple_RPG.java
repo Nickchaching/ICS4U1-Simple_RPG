@@ -1,3 +1,7 @@
+//Name of Game: Simple RPG
+//Name of Programmer: Nicholas Ching
+//Version Number: V1.0
+
 //Importing the Necessary Libraries
 import arc.*;
 import java.awt.image.BufferedImage;
@@ -17,6 +21,8 @@ public class Simple_RPG{
 	private static Color clrRed = new Color(255, 0, 0);
 	private static Color clrGreen = new Color(0, 255, 0);
 	private static Color clrBlue = new Color(0, 0, 255);
+	private static Color clrYellow = new Color(255, 255, 0);
+	private static Color clrOrange = new Color(255, 165, 0);
 	private static Color clrShield = new Color(65, 105, 225);
 	private static Color clrDamage = new Color(255, 87, 51);
 	
@@ -83,11 +89,19 @@ public class Simple_RPG{
 		int intFullDefence = 0;
 		int intDamageLevel = 0;
 		int intDefenceLevel = 0;
-		int intEnemyDamage;
-		int intEnemyDefence;
-		int intEnemyHealth;
-		boolean blnTrans;
-		char chrPlayAgain;												//2.4 - DIED DT DROWNING		
+		int intEnemyDamage = 0;
+		int intEnemyDefence = 0;
+		int intEnemyHealth = 0;
+		int intEnemyFullDefence = 0;
+		int intEnemyFullHealth = 0;
+		boolean blnTrans = true;
+		int intEnemyAttackTime = 0;										//2.2 - FIGHTING
+		int intAttackTimeOut = 0;
+		int intSlider = 0;
+		int intSliderVelo = 1;
+		int intEffDam = 0;
+		boolean blnAttack = false;
+		char chrPlayAgain;												//2.3 - DIED DT DROWNING		
 
 		
 		//Main Scene Loop
@@ -149,6 +163,7 @@ public class Simple_RPG{
 				}
 				else if(intMouseX > 850 && intMouseX < 1100 && intMouseY > 425 && intMouseY < 525 && intMouseClicked == 1){
 					dblScene = 3;
+					blnTrans = false;
 				}
 				else if(intMouseX > 850 && intMouseX < 1100 && intMouseY > 575 && intMouseY < 675 && intMouseClicked == 1){
 					dblScene = 4;
@@ -161,10 +176,10 @@ public class Simple_RPG{
 			while(dblScene == 2.1){
 				
 				//Scene Animation In
-				//if (blnTrans = false){
-					//Scene2aIn(strMap, intCharX, intCharY);
-					//blnTrans = true;
-				//}
+				if (blnTrans == false){
+					Scene2aIn(strMap, intCharX, intCharY, intCharXLast, intCharYLast, intDamage, intMaxDamage, intDefence, intFullDefence, intHealth, intFullHealth);
+					blnTrans = true;
+				}
 				
 				//Scene Input
 				chrMovement = con.currentChar();
@@ -212,54 +227,6 @@ public class Simple_RPG{
 				if(intDefence < intFullDefence && (intCharX != intCharXLast || intCharY != intCharYLast)){
 					intDefence = intDefence + 1;
 				}
-				
-				//TO PROGRAM
-				//Draw Buildings, Buffs, and Enem
-				//FIGHTING INTERACTION
-				
-				
-				//CRITICAL = 2x DAMAGE
-				
-				//HERO INTERACTION
-				//Health always maxes at 50
-				//Shield 0 = 0
-				//Shield 1 = 5
-				//Shield 2 = 10
-				//Shield 3 = 15
-				//Shield 4 = 25
-				//Damage 0 = 10
-				//Damage 1 = 15
-				//Damage 2 = 23
-				//Damage 3 = 35
-				//Damage 4 = 50
-				
-				//ENEMY INTERACTION
-				//e1 = 10 health, 0 shield, 10 damage, 1% chance crit
-				//e2 = 25 health, 0 shield, 15 damage, 3% chance crit
-				//e3 = 50 health, 10 shield, 20 damage, 5% chance crit
-				//e4 = 75 health, 25 shield, 25 damage, 7% chance crit
-				//e5 = 100 health, 50 shield, 30 damage, 10% chance crit
-				
-				//TIME BASED ATTACKING SYSTEM
-				//Shield Regens 10%/second
-				//Enemy Attacks Every 5 Seconds
-				//Hero can attack constantly, but player has to stop a bouncing RYG slider in green zone.
-				//OUTER 10% EDGES - Black = 10% full damage
-				//NEXT 10% - 30%  - Red = 25% full damage
-				//NEXT 30% - 45%  - Yellow = 50% full damage
-				//NEXT 45% - 49%  - Green = 100% full damage
-				//MIDDLE 49%, 50% - Orange = CRIT 200% full damage
-				
-				//0 - 29, 271 - 300
-				//30 - 89, 211 - 270
-				//90 - 134, 166 - 211
-				//135 - 147, 153 - 165
-				//148 - 152
-				
-				//MaxDamage represents the maximum amount of damage attainable through all sources of powerups
-				//FullHealth represents the current 100% state of health
-				//FullShield represents the current 100% state of shield
-				
 				
 				//Scene Graphics
 				Scene2a(strMap, intCharX, intCharY, intCharXLast, intCharYLast, intDamage, intMaxDamage, intDefence, intFullDefence, intHealth, intFullHealth);
@@ -331,12 +298,225 @@ public class Simple_RPG{
 					Scene2a(strMap, intCharX, intCharY, intCharXLast, intCharYLast, intDamage, intMaxDamage, intDefence, intFullDefence, intHealth, intFullHealth);
 				}
 				
+				//Enemy Interaction
+				if(strMap[intCharY - 1][intCharX - 1].equals("e1")){
+					//Setting Enemy Parameters
+					intEnemyFullHealth = 10;
+					intEnemyFullDefence = 0;
+					intEnemyDamage = 10;
+					
+					//Copying Max to Stat
+					intEnemyHealth = intEnemyFullHealth;
+					intEnemyDefence = intEnemyFullDefence;
+					
+					//Battle Variable Reset
+					intSlider = 0;
+					intEnemyAttackTime = 0;
+					intSliderVelo = 1;
+					
+					//Battle Scene
+					dblScene = 2.2;
+				}
+				else if(strMap[intCharY - 1][intCharX - 1].equals("e2")){
+					//Setting Enemy Parameters
+					intEnemyFullHealth = 25;
+					intEnemyFullDefence = 0;
+					intEnemyDamage = 15;
+					
+					//Copying Max to Stat
+					intEnemyHealth = intEnemyFullHealth;
+					intEnemyDefence = intEnemyFullDefence;
+					
+					//Battle Variable Reset
+					intSlider = 0;
+					intEnemyAttackTime = 0;
+					intSliderVelo = 1;
+					
+					//Battle Scene
+					dblScene = 2.2;
+				}
+				else if(strMap[intCharY - 1][intCharX - 1].equals("e3")){
+					//Setting Enemy Parameters
+					intEnemyFullHealth = 50;
+					intEnemyFullDefence = 10;
+					intEnemyDamage = 20;
+					
+					//Copying Max to Stat
+					intEnemyHealth = intEnemyFullHealth;
+					intEnemyDefence = intEnemyFullDefence;
+					
+					//Battle Variable Reset
+					intSlider = 0;
+					intEnemyAttackTime = 0;
+					intSliderVelo = 1;
+					
+					//Battle Scene
+					dblScene = 2.2;
+				}
+				else if(strMap[intCharY - 1][intCharX - 1].equals("e4")){
+					//Setting Enemy Parameters
+					intEnemyFullHealth = 75;
+					intEnemyFullDefence = 25;
+					intEnemyDamage = 25;
+					
+					//Copying Max to Stat
+					intEnemyHealth = intEnemyFullHealth;
+					intEnemyDefence = intEnemyFullDefence;
+					
+					//Battle Variable Reset
+					intSlider = 0;
+					intEnemyAttackTime = 0;
+					intSliderVelo = 1;
+					
+					//Battle Scene
+					dblScene = 2.2;
+				}
+				else if(strMap[intCharY - 1][intCharX - 1].equals("e5")){
+					//Setting Enemy Parameters
+					intEnemyFullHealth = 100;
+					intEnemyFullDefence = 50;
+					intEnemyDamage = 30;
+					
+					//Copying Max to Stat
+					intEnemyHealth = intEnemyFullHealth;
+					intEnemyDefence = intEnemyFullDefence;
+					
+					//Battle Variable Reset
+					intSlider = 0;
+					intEnemyAttackTime = 0;
+					intSliderVelo = 1;
+					
+					//Battle Scene
+					dblScene = 2.2;
+				}
+				
 				//Last Position Tracking
 				intCharXLast = intCharX;
 				intCharYLast = intCharY;
 				
 				con.sleep(intDelay);
 				
+			}
+			
+			//Scene 2.2 - FIGHTING
+			while(dblScene == 2.2){
+				
+				//Scene Graphics
+				Scene2b(intEnemyHealth, intEnemyDefence, intEnemyDamage, intEnemyFullHealth, intEnemyFullDefence, intDamage, intMaxDamage, intDefence, intFullDefence, intHealth, intFullHealth, intSlider, blnAttack, intEnemyAttackTime);
+				
+				//Bouncing Slider
+				if(intSlider == 0){
+					intSliderVelo = 1;
+				}
+				else if(intSlider == 100){
+					intSliderVelo = -1;
+				}
+				
+				//Shield Regen
+				if((intEnemyAttackTime % 50) == 0){
+					if(intDefence < intFullDefence){
+						intDefence = intDefence + (intFullDefence / 10);
+						if(intDefence > intFullDefence){
+							intDefence = intFullDefence;
+						}
+					}
+					if(intEnemyDefence < intEnemyFullDefence){
+						intEnemyDefence = intEnemyDefence + (intEnemyFullDefence/10);
+						if(intEnemyDefence > intEnemyFullDefence){
+							intEnemyDefence = intEnemyFullDefence;
+						}
+					}
+				}
+				
+				//Hero Attack Check
+				if(con.currentChar() == 'a' && intAttackTimeOut >= 30){
+					blnAttack = true;
+				}
+				
+				//Hero Attack
+				if(blnAttack == true){
+					//Animation Graphics
+					Scene2b(intEnemyHealth, intEnemyDefence, intEnemyDamage, intEnemyFullHealth, intEnemyFullDefence, intDamage, intMaxDamage, intDefence, intFullDefence, intHealth, intFullHealth, intSlider, blnAttack, intEnemyAttackTime);
+					
+					//Calculating Effective Damage
+					if((intSlider >= 0 && intSlider <= 9) || (intSlider >= 91 && intSlider <= 100)){
+						intEffDam = Math.round(intDamage/10);
+					}
+					else if((intSlider >= 10 && intSlider <= 29) || (intSlider >= 71 && intSlider <= 90)){
+						intEffDam = Math.round(intDamage/4);
+					}
+					else if((intSlider >= 30 && intSlider <= 44) || (intSlider >= 56 && intSlider <= 70)){
+						intEffDam = Math.round(intDamage/2);
+					}
+					else if((intSlider >= 45 && intSlider <= 49) || (intSlider >= 51 && intSlider <= 55)){
+						intEffDam = Math.round(intDamage);
+					}
+					else if(intSlider == 50){
+						intEffDam = Math.round(intDamage * 2);
+					}
+					
+					//Removing Enemy Shield/Health
+					if(intEffDam <= intEnemyDefence){
+						intEnemyDefence = intEnemyDefence - intEffDam;
+					}
+					else{
+						intEnemyHealth = intEnemyHealth + (intEnemyDefence - intEffDam);
+						intEnemyDefence = 0;
+					}
+					
+					//Resetting Slider and Timer
+					intSlider = 0;
+					intSliderVelo = 1;
+					intAttackTimeOut = 0;
+					blnAttack = false;
+					
+					//Animation Graphics
+					Scene2b(intEnemyHealth, intEnemyDefence, intEnemyDamage, intEnemyFullHealth, intEnemyFullDefence, intDamage, intMaxDamage, intDefence, intFullDefence, intHealth, intFullHealth, intSlider, blnAttack, intEnemyAttackTime);
+				}
+				
+				
+				//Enemy 5 Second Attack
+				if(intEnemyAttackTime > 250){
+					//Animation Graphics
+					Scene2b(intEnemyHealth, intEnemyDefence, intEnemyDamage, intEnemyFullHealth, intEnemyFullDefence, intDamage, intMaxDamage, intDefence, intFullDefence, intHealth, intFullHealth, intSlider, blnAttack, intEnemyAttackTime);
+					
+					//Removing Shield/Health
+					if(intEnemyDamage <= intDefence){
+						intDefence = intDefence - intEnemyDamage;
+					}
+					else{
+						intHealth = intHealth + (intDefence - intEnemyDamage);
+						intDefence = 0;
+					}
+					
+					//Resetting Timer
+					intEnemyAttackTime = 0;
+					
+					//Animation Graphics
+					Scene2b(intEnemyHealth, intEnemyDefence, intEnemyDamage, intEnemyFullHealth, intEnemyFullDefence, intDamage, intMaxDamage, intDefence, intFullDefence, intHealth, intFullHealth, intSlider, blnAttack, intEnemyAttackTime);
+				}
+				
+				//Cycle Count
+				if(intAttackTimeOut >= 30){
+					intSlider = intSlider + intSliderVelo;
+				}
+				intEnemyAttackTime = intEnemyAttackTime + 1;
+				intAttackTimeOut = intAttackTimeOut + 1;
+				
+				//Hero Defeated
+				if(intHealth <= 0){
+					dblScene = 2.4;
+				}
+				
+				//Enemy Defeated
+				if(intEnemyHealth <= 0){
+					dblScene = 2.1;
+					
+					//Remove Enemy
+					strMap[intCharY - 1][intCharX - 1] = "";
+					
+					blnTrans = false;
+				}
 			}
 			
 			//Scene 2.3 - WATER DEATH
@@ -359,9 +539,46 @@ public class Simple_RPG{
 				
 			}
 			
+			//Scene 2.4 - ENEMY DEATH
+			while(dblScene == 2.4){
+				
+				//Scene Graphics
+				Scene2d();
+				
+				con.sleep(1000);
+				
+				//Scene Input
+				chrPlayAgain = con.getChar();
+				
+				if(chrPlayAgain == 'p'){
+					dblScene = 0;
+				}
+				else{
+					dblScene = 4;
+				}
+				
+			}
 			
-			
-			
+			//Scene 3 - HELP SCREEN
+			while(dblScene == 3){
+				
+				//Scene Animation In
+				if (blnTrans == false){
+					Scene3In();
+					blnTrans = true;
+				}
+				
+				//Scene Graphics
+				Scene3();
+				
+				//Scene Input
+				chrPlayAgain = con.getChar();
+				
+				if(chrPlayAgain == 'r'){
+					dblScene = 0;
+				}
+				
+			}
 			
 			//Scene 4 - GAME OVER (END PROGRAM)
 			while(dblScene == 4){
@@ -507,29 +724,102 @@ public class Simple_RPG{
 		
 		//Scene Variables
 		int intCount;
-		int intPosX = 1150;
+		int intPosY = 800;
 		int intVelo = 0;
 		
 		//Preparing Elements (Based on Input)
-		if(dblScene == 2.1){
-			con.setDrawColor(clrGreen);
-		}
-		else if(dblScene == 3){
-			con.setDrawColor(clrBlue);
-		}
-		else if(dblScene == 4){
-			con.setDrawColor(clrRed);
-		}
+		con.setDrawColor(clrBlack);
 		
 		//Transition Out if Input Selected
 		if(dblScene != 1){
-			for(intCount = 0; intCount < 30; intCount++){
-				con.fillRect(intPosX, 0, 1150, 800);
-				intVelo = intVelo + 3;
-				intPosX = intPosX - intVelo;
+			for(intCount = 0; intCount < 35; intCount++){
+				con.fillRect(0, intPosY, 1150, 800);
+				intVelo = intVelo + 2;
+				intPosY = intPosY - intVelo;
 				con.repaint();
 				con.sleep(17);
 			}
+		}
+	}
+	
+	//Scene 2.1 (IN) - MAP
+	public static void Scene2aIn(String strMap[][], int intCharX, int intCharY, int intCharXLast, int intCharYLast, int intDamage, int intMaxDamage, int intDefence, int intFullDefence, int intHealth, int intFullHealth){
+		
+		//Scene Images
+		BufferedImage imgTree = con.loadImage("Graphics/tree.png");
+		BufferedImage imgGrass = con.loadImage("Graphics/grass.png");
+		BufferedImage imgWater = con.loadImage("Graphics/water.png");
+		BufferedImage imgBuild = con.loadImage("Graphics/build.png");
+		BufferedImage imgHero = con.loadImage("Graphics/hero.png");
+		BufferedImage imgDamage = con.loadImage("Graphics/damage.png");
+		BufferedImage imgShield = con.loadImage("Graphics/shield.png");
+		BufferedImage imgEnemy1 = con.loadImage("Graphics/enemy1.png");
+		BufferedImage imgEnemy2 = con.loadImage("Graphics/enemy2.png");
+		BufferedImage imgEnemy3 = con.loadImage("Graphics/enemy3.png");
+		BufferedImage imgEnemy4 = con.loadImage("Graphics/enemy4.png");
+		BufferedImage imgEnemy5 = con.loadImage("Graphics/enemy5.png");
+		
+		//Scene Variables
+		int intCount;
+		int intCount2;
+		int intPosY = 800;
+		int intVelo = 0;
+		
+		while(intPosY > 0){
+		
+			//DRAWING MAP BASE
+			//Reading Rows
+			for(intCount = 0; intCount < 20; intCount++){
+				//Reading Columns
+				for(intCount2 = 0; intCount2 < 20; intCount2++){
+					//Base Elements
+					if(strMap[intCount][intCount2].equals("w")){
+						con.drawImage(imgWater, (intCount2 * 40), (intCount * 40) + intPosY);
+					}
+					else if(strMap[intCount][intCount2].equals("t")){
+						con.drawImage(imgTree, (intCount2 * 40), (intCount * 40) + intPosY);
+					}
+					else{
+						con.drawImage(imgGrass, (intCount2 * 40), (intCount * 40) + intPosY);
+					}
+					
+					//Additional Elements
+					if(strMap[intCount][intCount2].equals("b")){
+						con.drawImage(imgBuild, (intCount2 * 40), (intCount * 40) + intPosY);
+					}
+					else if(strMap[intCount][intCount2].equals("s")){
+						con.drawImage(imgShield, (intCount2 * 40), (intCount * 40) + intPosY);
+					}
+					else if(strMap[intCount][intCount2].equals("d")){
+						con.drawImage(imgDamage, (intCount2 * 40), (intCount * 40) + intPosY);
+					}
+					else if(strMap[intCount][intCount2].equals("e1")){
+						con.drawImage(imgEnemy1, (intCount2 * 40), (intCount * 40) + intPosY);
+					}
+					else if(strMap[intCount][intCount2].equals("e2")){
+						con.drawImage(imgEnemy2, (intCount2 * 40), (intCount * 40) + intPosY);
+					}
+					else if(strMap[intCount][intCount2].equals("e3")){
+						con.drawImage(imgEnemy3, (intCount2 * 40), (intCount * 40) + intPosY);
+					}
+					else if(strMap[intCount][intCount2].equals("e4")){
+						con.drawImage(imgEnemy4, (intCount2 * 40), (intCount * 40) + intPosY);
+					}
+					else if(strMap[intCount][intCount2].equals("e5")){
+						con.drawImage(imgEnemy5, (intCount2 * 40), (intCount * 40) + intPosY);
+					}
+				}
+			}
+		
+			//Drawing Hero's Final Position
+			con.drawImage(imgHero, (intCharX * 40) - 40, (intCharY * 40) - 40 + intPosY);
+			con.repaint();
+			
+			//Increment
+			intVelo = intVelo + 1;
+			intPosY = intPosY - intVelo;
+			
+			con.sleep(17);
 		}
 	}
 	
@@ -552,6 +842,7 @@ public class Simple_RPG{
 		BufferedImage imgHP100 = con.loadImage("Graphics/health100.png");
 		BufferedImage imgHUDDamage = con.loadImage("Graphics/HUDdamage.png");
 		BufferedImage imgHUDShield = con.loadImage("Graphics/HUDshield.png");
+		BufferedImage imgHUDHero = con.loadImage("Graphics/hero.png");
 		
 		//Font Alignment Variable (Coordinate Based)
 		int intCAlign[] = new int[2];
@@ -596,6 +887,9 @@ public class Simple_RPG{
 		con.drawString(intDefence+"/"+intFullDefence, 975 - (intCAlign[0]/2), 667 - (intCAlign[1]/2));
 		intCAlign = CAlign(fnt30, intHealth+"/"+intFullHealth);
 		con.drawString(intHealth+"/"+intFullHealth, 975 - (intCAlign[0]/2), 742 - (intCAlign[1]/2));
+		
+		//Drawing Hero/Enemy HUD Image
+		con.drawImage(imgHUDHero, 955, 498);
 		
 		//Hero Movement Animation
 		if(intCharX > intCharXLast){
@@ -857,23 +1151,251 @@ public class Simple_RPG{
 	}
 	
 	//Scene 2.2 - FIGHTING
-	public static void Scene2b(){
+	public static void Scene2b(int intEnemyHealth, int intEnemyDefence, int intEnemyDamage, int intEnemyFullHealth, int intEnemyFullDefence, int intDamage, int intMaxDamage, int intDefence, int intFullDefence, int intHealth, int intFullHealth, int intSlider, boolean blnAttack, int intEnemyAttackTime){
 		
 		//Scene Images
+		int intType = 0;
 		BufferedImage imgFightBG = con.loadImage("Graphics/battleBG.png");
 		BufferedImage imgFightFG = con.loadImage("Graphics/battleFG.png");
-		BufferedImage imgEnemy1 = con.loadImage("Graphics/enemy1.png");
+		BufferedImage imgHP100 = con.loadImage("Graphics/health100.png");
+		BufferedImage imgHUDDamage = con.loadImage("Graphics/HUDdamage.png");
+		BufferedImage imgHUDShield = con.loadImage("Graphics/HUDshield.png");
+		BufferedImage imgHUDHero = con.loadImage("Graphics/hero.png");
+		BufferedImage imgHero = con.loadImage("Graphics/battleHero.png");
+		if(intEnemyFullHealth == 10){
+			intType = 1;
+		}
+		else if(intEnemyFullHealth == 25){
+			intType = 2;
+		}
+		else if(intEnemyFullHealth == 50){
+			intType = 3;
+		}
+		else if(intEnemyFullHealth == 75){
+			intType = 4;
+		}
+		else if(intEnemyFullHealth == 100){
+			intType = 5;
+		}
+		BufferedImage imgHUDEnemy = con.loadImage("Graphics/enemy"+intType+".png");
+		BufferedImage imgEnemy = con.loadImage("Graphics/battleEnemy"+intType+".png");
+		BufferedImage imgParticle = con.loadImage("Graphics/particle.png");
+		BufferedImage imgEnemyParticle = con.loadImage("Graphics/particleEnemy.png");
 		
+		//Scene Variables
+		int intCount;
+		int intX;
+		int intY;
+		int intVeloX = 0;
+		int intVeloY = 0;
+		
+		//Font Alignment Variable (Coordinate Based)
+		int intCAlign[] = new int[2];
+		
+		//Drawing Fighting Background and Characters
+		con.drawImage(imgFightBG, 0, 0);
+		con.drawImage(imgHero, 25, 450);
+		con.drawImage(imgEnemy, 450, 425);
+		con.drawImage(imgFightFG, 0, 0);
+		
+		//Drawing HUD Box
+		con.setDrawColor(clrBlack);
+		con.fillRect(800, 0, 350, 800);
+		
+		//Drawing Hero HUD Stats Fill
+		con.setDrawColor(clrDamage);
+		con.fillRect(825, 575, 300 * intDamage/intMaxDamage, 50);
+		con.setDrawColor(clrShield);
+		if(intFullDefence != 0){
+			con.fillRect(825, 650, 300 * intDefence/intFullDefence, 50);
+		}
+		con.setDrawColor(clrRed);
+		con.fillRect(825, 725, 300 * intHealth/intFullHealth, 50);
+		
+		//Drawing Enemy HUD Stats Fill
+		con.setDrawColor(clrDamage);
+		con.fillRect(825, 175, 300, 50);
+		con.setDrawColor(clrShield);
+		if(intEnemyFullDefence != 0){
+			con.fillRect(825, 100, 300 * intEnemyDefence/intEnemyFullDefence, 50);
+		}
+		con.setDrawColor(clrRed);
+		con.fillRect(825, 25, 300 * intEnemyHealth/intEnemyFullHealth, 50);
+		
+		//Preparing Elements
+		con.setDrawColor(clrWhite);
+		con.setDrawFont(fnt30);
+		
+		//Drawing Hero HUD Outline and Elements
+		con.drawRect(825, 575, 300, 50);
+		con.drawImage(imgHUDDamage, 840, 585);
+		con.drawRect(825, 650, 300, 50);
+		con.drawImage(imgHUDShield, 840, 660);
+		con.drawRect(825, 725, 300, 50);
+		con.drawImage(imgHP100, 840, 735);
+
+		//Drawing Enemy HUD Outline and Elements		
+		con.drawRect(825, 25, 300, 50);
+		con.drawImage(imgHUDDamage, 840, 185);
+		con.drawRect(825, 100, 300, 50);
+		con.drawImage(imgHUDShield, 840, 110);
+		con.drawRect(825, 175, 300, 50);
+		con.drawImage(imgHP100, 840, 35);
+		
+		//Drawing Hero HUD Text
+		intCAlign = CAlign(fnt30, intDamage+"/"+intMaxDamage);
+		con.drawString(intDamage+"/"+intMaxDamage, 975 - (intCAlign[0]/2), 592 - (intCAlign[1]/2));
+		intCAlign = CAlign(fnt30, intDefence+"/"+intFullDefence);
+		con.drawString(intDefence+"/"+intFullDefence, 975 - (intCAlign[0]/2), 667 - (intCAlign[1]/2));
+		intCAlign = CAlign(fnt30, intHealth+"/"+intFullHealth);
+		con.drawString(intHealth+"/"+intFullHealth, 975 - (intCAlign[0]/2), 742 - (intCAlign[1]/2));
+		
+		//Drawing Enemy HUD Text
+		intCAlign = CAlign(fnt30, ""+intEnemyDamage);
+		con.drawString(""+intEnemyDamage, 975 - (intCAlign[0]/2), 192 - (intCAlign[1]/2));
+		intCAlign = CAlign(fnt30, intEnemyDefence+"/"+intEnemyFullDefence);
+		con.drawString(intEnemyDefence+"/"+intEnemyFullDefence, 975 - (intCAlign[0]/2), 117 - (intCAlign[1]/2));
+		intCAlign = CAlign(fnt30, intEnemyHealth+"/"+intEnemyFullHealth);
+		con.drawString(intEnemyHealth+"/"+intEnemyFullHealth, 975 - (intCAlign[0]/2), 42 - (intCAlign[1]/2));
+		
+		//Drawing Slider and Enemy Time HUD Outline and Fill
+		con.setDrawColor(clrRed);
+		con.fillRect(855, 410, 59, 50);
+		con.fillRect(1036, 410, 59, 50);
+		con.fillRect(825, 340, Math.round(300*intEnemyAttackTime/250), 50);
+		con.setDrawColor(clrYellow);
+		con.fillRect(915, 410, 44, 50);
+		con.fillRect(991, 410, 44, 50);
+		con.setDrawColor(clrGreen);
+		con.fillRect(960, 410, 12, 50);
+		con.fillRect(978, 410, 12, 50);
+		con.setDrawColor(clrOrange);
+		con.fillRect(973, 410, 5, 50);
+		con.setDrawColor(clrWhite);
+		con.drawRect(825, 340, 300, 50);
+		con.drawRect(825, 410, 300, 50);
+		con.fillRect(825 + intSlider * 3, 410, 3, 50);
+		
+		//Drawing Hero/Enemy HUD Image
+		con.drawImage(imgHUDHero, 955, 498);
+		con.drawImage(imgHUDEnemy, 955, 262);
+		
+		//Repaint
+		con.repaint();
+		
+		//Hero Attack Animations
+		if(blnAttack == true){
+			//Setting Start Position to Hero Center
+			intX = 75;
+			intY = 475;
+			
+			//Approach Enemy
+			while(intX < 475){
+				//Calculations
+				intVeloX = intVeloX + 1;
+				intX = intX + intVeloX;
+				while(intY != 450){
+					intY = intY - 1;
+				}
+				
+				//Drawing Fighting Background and Characters
+				con.drawImage(imgFightBG, 0, 0);
+				con.drawImage(imgHero, 25, 450);
+				con.drawImage(imgEnemy, 450, 425);
+				con.drawImage(imgFightFG, 0, 0);
+				
+				//Drawing Particle
+				con.drawImage(imgParticle, intX, intY);
+				con.repaint();
+				con.sleep(17);
+			}
+		}
+		
+		//Enemy Attack Animations
+		if(intEnemyAttackTime == 250){
+			//Setting Start Position to Enemy Center
+			intX = 475;
+			intY = 450;
+			
+			//Approach Enemy
+			while(intX > 75){
+				//Calculations
+				intVeloX = intVeloX + 1;
+				intX = intX - intVeloX;
+				while(intY != 475){
+					intY = intY + 1;
+				}
+				
+				//Drawing Fighting Background and Characters
+				con.drawImage(imgFightBG, 0, 0);
+				con.drawImage(imgHero, 25, 450);
+				con.drawImage(imgEnemy, 450, 425);
+				con.drawImage(imgFightFG, 0, 0);
+				
+				//Drawing Particle
+				con.drawImage(imgEnemyParticle, intX, intY);
+				con.repaint();
+				con.sleep(17);
+			}
+		}
 	}
 	
 	//Scene 2.3 - DIED DT DROWNING
 	public static void Scene2c(){
 		
 		//Scene Images
-		BufferedImage imgScene2dBG = con.loadImage("Graphics/Drowning Game Over.png");
+		BufferedImage imgScene2cBG = con.loadImage("Graphics/Drowning Game Over.png");
+		
+		//Drawing Image
+		con.drawImage(imgScene2cBG, 0, 0);
+		con.repaint();
+		
+	}
+	
+	//Scene 2.4 - DIED DT ENEMY
+	public static void Scene2d(){
+		
+		//Scene Images
+		BufferedImage imgScene2dBG = con.loadImage("Graphics/Enemy Game Over.png");
 		
 		//Drawing Image
 		con.drawImage(imgScene2dBG, 0, 0);
+		con.repaint();
+		
+	}
+	
+	//Scene 3 (IN) - HELP SCREEN
+	public static void Scene3In(){
+		//Scene Images
+		BufferedImage imgScene3BG = con.loadImage("Graphics/Help Screen.png");
+		
+		//Scene Variables
+		int intCount;
+		int intPosY = 800;
+		int intVelo = 0;
+
+		//Animation
+		while(intPosY > 0){
+			con.drawImage(imgScene3BG, 0, intPosY);
+			intVelo = intVelo + 2;
+			intPosY = intPosY - intVelo;
+			con.repaint();
+			con.sleep(17);
+		}
+		if(intPosY <= 0){
+			con.drawImage(imgScene3BG, 0, 0);
+			con.repaint();
+		}
+	}
+	
+	//Scene 3 - HELP SCREEN
+	public static void Scene3(){
+		
+		//Scene Images
+		BufferedImage imgScene3BG = con.loadImage("Graphics/Help Screen.png");
+		
+		//Drawing Image
+		con.drawImage(imgScene3BG, 0, 0);
 		con.repaint();
 		
 	}
