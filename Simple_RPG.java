@@ -250,6 +250,12 @@ public class Simple_RPG{
 				//NEXT 45% - 49%  - Green = 100% full damage
 				//MIDDLE 49%, 50% - Orange = CRIT 200% full damage
 				
+				//0 - 29, 271 - 300
+				//30 - 89, 211 - 270
+				//90 - 134, 166 - 211
+				//135 - 147, 153 - 165
+				//148 - 152
+				
 				//MaxDamage represents the maximum amount of damage attainable through all sources of powerups
 				//FullHealth represents the current 100% state of health
 				//FullShield represents the current 100% state of shield
@@ -538,6 +544,11 @@ public class Simple_RPG{
 		BufferedImage imgHero = con.loadImage("Graphics/hero.png");
 		BufferedImage imgDamage = con.loadImage("Graphics/damage.png");
 		BufferedImage imgShield = con.loadImage("Graphics/shield.png");
+		BufferedImage imgEnemy1 = con.loadImage("Graphics/enemy1.png");
+		BufferedImage imgEnemy2 = con.loadImage("Graphics/enemy2.png");
+		BufferedImage imgEnemy3 = con.loadImage("Graphics/enemy3.png");
+		BufferedImage imgEnemy4 = con.loadImage("Graphics/enemy4.png");
+		BufferedImage imgEnemy5 = con.loadImage("Graphics/enemy5.png");
 		BufferedImage imgHP100 = con.loadImage("Graphics/health100.png");
 		BufferedImage imgHUDDamage = con.loadImage("Graphics/HUDdamage.png");
 		BufferedImage imgHUDShield = con.loadImage("Graphics/HUDshield.png");
@@ -602,11 +613,33 @@ public class Simple_RPG{
 						else if(strMap[intCount][intCount2].equals("t")){
 							con.drawImage(imgTree, (intCount2 * 40), (intCount * 40));
 						}
-						else if(strMap[intCount][intCount2].equals("b")){
-							con.drawImage(imgBuild, (intCount2 * 40), (intCount * 40));
-						}
 						else{
 							con.drawImage(imgGrass, (intCount2 * 40), (intCount * 40));
+						}
+						
+						if(strMap[intCount][intCount2].equals("b")){
+							con.drawImage(imgBuild, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("s")){
+							con.drawImage(imgShield, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("d")){
+							con.drawImage(imgDamage, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e1")){
+							con.drawImage(imgEnemy1, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e2")){
+							con.drawImage(imgEnemy2, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e3")){
+							con.drawImage(imgEnemy3, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e4")){
+							con.drawImage(imgEnemy4, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e5")){
+							con.drawImage(imgEnemy5, (intCount2 * 40), (intCount * 40));
 						}
 					}
 				}
@@ -632,11 +665,33 @@ public class Simple_RPG{
 						else if(strMap[intCount][intCount2].equals("t")){
 							con.drawImage(imgTree, (intCount2 * 40), (intCount * 40));
 						}
-						else if(strMap[intCount][intCount2].equals("b")){
-							con.drawImage(imgBuild, (intCount2 * 40), (intCount * 40));
-						}
 						else{
 							con.drawImage(imgGrass, (intCount2 * 40), (intCount * 40));
+						}
+						
+						if(strMap[intCount][intCount2].equals("b")){
+							con.drawImage(imgBuild, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("s")){
+							con.drawImage(imgShield, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("d")){
+							con.drawImage(imgDamage, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e1")){
+							con.drawImage(imgEnemy1, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e2")){
+							con.drawImage(imgEnemy2, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e3")){
+							con.drawImage(imgEnemy3, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e4")){
+							con.drawImage(imgEnemy4, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e5")){
+							con.drawImage(imgEnemy5, (intCount2 * 40), (intCount * 40));
 						}
 					}
 				}
@@ -662,11 +717,33 @@ public class Simple_RPG{
 						else if(strMap[intCount][intCount2].equals("t")){
 							con.drawImage(imgTree, (intCount2 * 40), (intCount * 40));
 						}
-						else if(strMap[intCount][intCount2].equals("b")){
-							con.drawImage(imgBuild, (intCount2 * 40), (intCount * 40));
-						}
 						else{
 							con.drawImage(imgGrass, (intCount2 * 40), (intCount * 40));
+						}
+						
+						if(strMap[intCount][intCount2].equals("b")){
+							con.drawImage(imgBuild, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("s")){
+							con.drawImage(imgShield, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("d")){
+							con.drawImage(imgDamage, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e1")){
+							con.drawImage(imgEnemy1, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e2")){
+							con.drawImage(imgEnemy2, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e3")){
+							con.drawImage(imgEnemy3, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e4")){
+							con.drawImage(imgEnemy4, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e5")){
+							con.drawImage(imgEnemy5, (intCount2 * 40), (intCount * 40));
 						}
 					}
 				}
@@ -692,11 +769,33 @@ public class Simple_RPG{
 						else if(strMap[intCount][intCount2].equals("t")){
 							con.drawImage(imgTree, (intCount2 * 40), (intCount * 40));
 						}
-						else if(strMap[intCount][intCount2].equals("b")){
-							con.drawImage(imgBuild, (intCount2 * 40), (intCount * 40));
-						}
 						else{
 							con.drawImage(imgGrass, (intCount2 * 40), (intCount * 40));
+						}
+						
+						if(strMap[intCount][intCount2].equals("b")){
+							con.drawImage(imgBuild, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("s")){
+							con.drawImage(imgShield, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("d")){
+							con.drawImage(imgDamage, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e1")){
+							con.drawImage(imgEnemy1, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e2")){
+							con.drawImage(imgEnemy2, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e3")){
+							con.drawImage(imgEnemy3, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e4")){
+							con.drawImage(imgEnemy4, (intCount2 * 40), (intCount * 40));
+						}
+						else if(strMap[intCount][intCount2].equals("e5")){
+							con.drawImage(imgEnemy5, (intCount2 * 40), (intCount * 40));
 						}
 					}
 				}
@@ -734,6 +833,21 @@ public class Simple_RPG{
 				else if(strMap[intCount][intCount2].equals("d")){
 					con.drawImage(imgDamage, (intCount2 * 40), (intCount * 40));
 				}
+				else if(strMap[intCount][intCount2].equals("e1")){
+					con.drawImage(imgEnemy1, (intCount2 * 40), (intCount * 40));
+				}
+				else if(strMap[intCount][intCount2].equals("e2")){
+					con.drawImage(imgEnemy2, (intCount2 * 40), (intCount * 40));
+				}
+				else if(strMap[intCount][intCount2].equals("e3")){
+					con.drawImage(imgEnemy3, (intCount2 * 40), (intCount * 40));
+				}
+				else if(strMap[intCount][intCount2].equals("e4")){
+					con.drawImage(imgEnemy4, (intCount2 * 40), (intCount * 40));
+				}
+				else if(strMap[intCount][intCount2].equals("e5")){
+					con.drawImage(imgEnemy5, (intCount2 * 40), (intCount * 40));
+				}
 			}
 		}
 		
@@ -742,7 +856,17 @@ public class Simple_RPG{
 		con.repaint();
 	}
 	
-	//Scene 2.4 - DIED DT DROWNING
+	//Scene 2.2 - FIGHTING
+	public static void Scene2b(){
+		
+		//Scene Images
+		BufferedImage imgFightBG = con.loadImage("Graphics/battleBG.png");
+		BufferedImage imgFightFG = con.loadImage("Graphics/battleFG.png");
+		BufferedImage imgEnemy1 = con.loadImage("Graphics/enemy1.png");
+		
+	}
+	
+	//Scene 2.3 - DIED DT DROWNING
 	public static void Scene2c(){
 		
 		//Scene Images
