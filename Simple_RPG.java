@@ -95,6 +95,7 @@ public class Simple_RPG{
 		int intEnemyFullDefence = 0;
 		int intEnemyFullHealth = 0;
 		boolean blnTrans = true;
+		int intCount;
 		int intEnemyAttackTime = 0;										//2.2 - FIGHTING
 		int intAttackTimeOut = 0;
 		int intSlider = 0;
@@ -286,7 +287,7 @@ public class Simple_RPG{
 					intCharYLast = intCharY;
 					
 					//Health Regen Animation
-					while(intHealth < intFullHealth){
+					for(intCount = 0; intCount < 10 && intHealth < intFullHealth; intCount++){
 						intHealth = intHealth + 1;
 						Scene2a(strMap, intCharX, intCharY, intCharXLast, intCharYLast, intDamage, intMaxDamage, intDefence, intFullDefence, intHealth, intFullHealth);
 						con.sleep(50);
